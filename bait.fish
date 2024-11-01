@@ -14,14 +14,25 @@ function _tackle_inner
         exit
     end
 
-    bind \e\[D "eval $_flag_update left"
-    bind \e\[C "eval $_flag_update right"
-    bind \e\[A "eval $_flag_update up "
-    bind \e\[B "eval $_flag_update down"
+    for key in \$ \\ \* \? \~ \# \( \) \{ \} \[ \] \< \> \& \| \; \" \'
+        bind "$key" "$_flag_update $(string escape $key)"
+    end
+
+    for key in a b c d e f g h i j k l m n o p q r s t u v w x y z
+        bind $key "$_flag_update $key"
+    end
+
+    bind \e\[D "$_flag_update left"
+    bind \e\[C "$_flag_update right"
+    bind \e\[A "$_flag_update up"
+    bind \e\[B "$_flag_update down"
+    bind " " "$_flag_update space"
+
+    bind \cC exit
 end
 
 function _tackle_test_update
-    echo $argv
+    echo "$argv"
 end
 
 function _tackle_test_view
