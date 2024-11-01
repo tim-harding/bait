@@ -14,11 +14,11 @@ function _tackle_inner
         exit
     end
 
-    for key in \$ \\ \* \? \~ \# \( \) \{ \} \[ \] \< \> \& \| \; \" \'
+    for key in \$ \\ \* \? \~ \# \( \) \{ \} \[ \] \< \> \& \| \; \" \' \a \e \f \n \r \t \v
         bind "$key" "$_flag_update $(string escape $key)"
     end
 
-    for key in a b c d e f g h i j k l m n o p q r s t u v w x y z
+    for key in a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z \ca \cb \cc \cd \ce \cf \cg \ch \ci \cj \ck \cl \cm \cn \co \cp \cq \cr \cs \ct \cu \cv \cw \cx \cy \cz
         bind $key "$_flag_update $key"
     end
 
