@@ -1,6 +1,5 @@
 function bait
     set command $argv[1]
-    echo $command
     switch $command
         case confirm
             tackle -i_bait_confirm_init -u_bait_confirm_update -v_bait_confirm_view
@@ -13,7 +12,6 @@ function _bait_confirm_init
 end
 
 function _bait_confirm_update
-    echo update
     if test $_bait_state_confirm -eq 0
         set _bait_state_confirm 1
     else
@@ -22,7 +20,21 @@ function _bait_confirm_update
 end
 
 function _bait_confirm_view
-    _e "$(_tackle_style --bold -fred)Are you sure? $_tackle_epoch"
+    set selected $(_tackle_style -fblack -bred)
+    set unselected $(_tackle_style -fblack -bwhite)
+    set reset $(_tackle_style)
+
+    if test $_bait_state_confirm -eq 0
+        set yes $selected
+        set no $unselected
+    else
+        set yes $unselected
+        set no $selected
+    end
+
+    _tackle_cursor_home
+    _tackle_erase_all
+    _e "Are you sure?\n$yes  YES  $reset  $no  NO  $reset"
 end
 
 function _tackle_style
@@ -60,27 +72,46 @@ function _tackle_style
         _e ";9"
     end
 
-    if set -q _flag_foreground
-        switch $_flag_foreground
-            case black
-                _e ";30"
-            case red
-                _e ";31"
-            case green
-                _e ";32"
-            case yellow
-                _e ";33"
-            case blue
-                _e ";34"
-            case magenta
-                _e ";35"
-            case cyan
-                _e ";36"
-            case white
-                _e ";37"
-            case default
-                _e ";39"
-        end
+    switch $_flag_foreground
+        case black
+            _e ";30"
+        case red
+            _e ";31"
+        case green
+            _e ";32"
+        case yellow
+            _e ";33"
+        case blue
+            _e ";34"
+        case magenta
+            _e ";35"
+        case cyan
+            _e ";36"
+        case white
+            _e ";37"
+        case default
+            _e ";39"
+    end
+
+    switch $_flag_background
+        case black
+            _e ";40"
+        case red
+            _e ";41"
+        case green
+            _e ";42"
+        case yellow
+            _e ";43"
+        case blue
+            _e ";44"
+        case magenta
+            _e ";45"
+        case cyan
+            _e ";46"
+        case white
+            _e ";47"
+        case default
+            _e ";39"
     end
 
     _e m
@@ -105,9 +136,6 @@ function _tackle_inner
         exit
     end
 
-    $_flag_init
-    eval "function _tackle_update_view --on-variable _tackle_epoch; $_flag_view; end"
-
     for key in \$ \\ \* \? \~ \# \( \) \{ \} \[ \] \< \> \& \| \; \" \' \a \e \f \n \r \t \v
         bind "$key" "$_flag_update $(string escape $key)"
     end
@@ -123,6 +151,10 @@ function _tackle_inner
     bind " " "$_flag_update space"
 
     bind \cC exit
+
+    $_flag_init
+    eval "function _tackle_update_view --on-variable _tackle_epoch; $_flag_view; end"
+    $_flag_view
 end
 
 function _tackle_state
