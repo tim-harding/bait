@@ -32,9 +32,10 @@ function _bait_confirm_view
         set no $selected
     end
 
-    _tackle_cursor_home
-    _tackle_erase_all
+    _tackle_cursor_save
+    _tackle_erase_to_end
     _e "Are you sure?\n$yes  YES  $reset  $no  NO  $reset"
+    _tackle_cursor_restore
 end
 
 function _tackle_style
