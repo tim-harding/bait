@@ -1,9 +1,88 @@
+function bait
+    set command $argv[1]
+    echo $command
+    switch $command
+        case confirm
+            set state 0
+            _e "$(_tackle_style --bold -fred)Are you sure?"
+    end
+end
+
+function _tackle_style
+    # Reference:
+    # https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797#colors--graphics-mode
+
+    argparse 'f/foreground=?' 'b/background=?' \
+        B/bold d/dim i/italic u/underline k/blinking r/reverse v/invisible s/strikethrough \
+        h/help -- $argv
+
+    _e "\e[0"
+
+    if set -q _flag_bold
+        _e ";1"
+    end
+    if set -q _flag_dim
+        _e ";2"
+    end
+    if set -q _flag_italic
+        _e ";3"
+    end
+    if set -q _flag_underline
+        _e ";4"
+    end
+    if set -q _flag_blinking
+        _e ";5"
+    end
+    if set -q _flag_reverse
+        _e ";7"
+    end
+    if set -q _flag_invisible
+        _e ";8"
+    end
+    if set -q _flag_strikethrough
+        _e ";9"
+    end
+
+    if set -q _flag_foreground
+        switch $_flag_foreground
+            case black
+                _e ";30"
+            case red
+                _e ";31"
+            case green
+                _e ";32"
+            case yellow
+                _e ";33"
+            case blue
+                _e ";34"
+            case magenta
+                _e ";35"
+            case cyan
+                _e ";36"
+            case white
+                _e ";37"
+            case default
+                _e ";39"
+        end
+    end
+
+    _e m
+end
+
+function _e
+    echo -nes $argv
+end
+
 function tackle
-    fish --no-config --init-command "source $(status filename); _tackle_inner $argv;"
+    fish --no-config --init-command "source $(status filename)
+    _tackle_inner $argv
+    "
 end
 
 function _tackle_inner
-    eval "function fish_prompt; end;"
+    eval "function fish_prompt
+end
+"
     argparse "i/init=?" "u/update=" "v/view=" -- $argv
 
     if set -q _flag_init
