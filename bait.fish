@@ -3,9 +3,26 @@ function bait
     echo $command
     switch $command
         case confirm
-            set state 0
-            _e "$(_tackle_style --bold -fred)Are you sure?"
+            tackle -i_bait_confirm_init -u_bait_confirm_update -v_bait_confirm_view
     end
+end
+
+function _bait_confirm_init
+    set -g _bait_state_confirm 0
+    _tackle_state _bait_state_confirm
+end
+
+function _bait_confirm_update
+    echo update
+    if test $_bait_state_confirm -eq 0
+        set _bait_state_confirm 1
+    else
+        set _bait_state_confirm 0
+    end
+end
+
+function _bait_confirm_view
+    _e "$(_tackle_style --bold -fred)Are you sure? $_tackle_epoch"
 end
 
 function _tackle_style
@@ -74,25 +91,22 @@ function _e
 end
 
 function tackle
-    fish --no-config --init-command "source $(status filename)
-    _tackle_inner $argv
-    "
+    fish --no-config --init-command \
+        "source $(status filename); _tackle_inner $argv"
 end
 
 function _tackle_inner
-    eval "function fish_prompt
-end
-"
-    argparse "i/init=?" "u/update=" "v/view=" -- $argv
+    eval "function fish_prompt; end"
+    set -g _tackle_epoch 0
+    argparse "i/init=" "u/update=" "v/view=" -- $argv
 
-    if set -q _flag_init
-        eval _flag_init
-    end
-
-    if not set -q _flag_update; or not set -q _flag_view
-        echo "Expected update and view functions"
+    if not set -q _flag_init _flag_update _flag_view
+        echo "Expected init, update, and view functions"
         exit
     end
+
+    $_flag_init
+    eval "function _tackle_update_view --on-variable _tackle_epoch; $_flag_view; end"
 
     for key in \$ \\ \* \? \~ \# \( \) \{ \} \[ \] \< \> \& \| \; \" \' \a \e \f \n \r \t \v
         bind "$key" "$_flag_update $(string escape $key)"
@@ -109,12 +123,16 @@ end
     bind " " "$_flag_update space"
 
     bind \cC exit
+end
 
-    clear
-    echo -ne "hello\nworld"
-    _tackle_cursor_home
-    _tackle_cursor_line_next 3
-    _tackle_cursor_position
+function _tackle_state
+    for arg in $argv
+        eval "function _tackle_handle_state_$arg --on-variable $arg; _tackle_epoch_increment; end"
+    end
+end
+
+function _tackle_epoch_increment
+    set _tackle_epoch $(math $_tackle_epoch + 1)
 end
 
 function _tackle_cursor_home -d "Moves cursor to (0,0)"
@@ -195,11 +213,4 @@ end
 
 function _tackle_erase_line
     echo -ne "\e[2K"
-end
-
-function _tackle_test_update
-    string escape "$argv"
-end
-
-function _tackle_test_view
 end
