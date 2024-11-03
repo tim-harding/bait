@@ -11,8 +11,5 @@ function _bait_confirm_view
         set no $selected
     end
 
-    # _tackle_cursor save
-    _tackle_erase to_end
     echo -nes "Are you sure?\n$yes  YES  $reset  $no  NO  $reset"
-    # _tackle_cursor restore
 end
