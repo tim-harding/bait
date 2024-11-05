@@ -12,5 +12,8 @@ function bait --argument-names command
 
         case filter
             tackle _bait_filter $argv
+
+        case input
+            _bait_input $argv
     end
 end
