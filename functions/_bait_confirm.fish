@@ -1,4 +1,4 @@
-function _bait_confirm --argument-names key modifier
+function _bait_confirm --argument-names key
     if not set -q _bait_state
         set -g _bait_state 0
     end
@@ -9,7 +9,7 @@ function _bait_confirm --argument-names key modifier
         case y
             set -g _tackle_exit 0
             return
-        case n
+        case n escape
             set -g _tackle_exit 1
             return
         case enter

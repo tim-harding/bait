@@ -1,4 +1,4 @@
-function _bait_choose --argument-names key modifier
+function _bait_choose --argument-names key
     if not set -q _bait_state
         set -g _bait_state 0
         set -g _bait_options $argv
