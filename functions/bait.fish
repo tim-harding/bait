@@ -11,6 +11,6 @@ function bait --argument-names command
             _bait_spin $argv
 
         case filter
-            tacke _bait_filter $argv
+            tackle _bait_filter $argv
     end
 end
