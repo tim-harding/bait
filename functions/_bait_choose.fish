@@ -1,31 +1,31 @@
 function _bait_choose --argument-names key
-    if not set -q _bait_state
-        set -g _bait_state 0
-        set -g _bait_options $argv
+    if not set -q choice
+        set -g choice 0
+        set -g options $argv
     end
 
     switch $key
         case up
-            set _bait_state (math "($_bait_state - 1 + $(count $_bait_options))")
+            set choice (math "($choice - 1 + $(count $options))")
         case down
-            set _bait_state (math "($_bait_state + 1)")
+            set choice (math "($choice + 1)")
         case enter
-            echo $_bait_options[(math "$_bait_state + 1")]
+            echo $options[(math "$choice + 1")]
             set -g _tackle_exit 0
             return
         case escape
             set -g _tackle_exit 1
             return
     end
-    set _bait_state (math "$_bait_state % $(count $_bait_options)")
+    set choice (math "$choice % $(count $options)")
 
     echo "Choose:"
-    for i in (seq (count $_bait_options))
-        if test (math "$_bait_state + 1") -eq $i
+    for i in (seq (count $options))
+        if test (math "$choice + 1") -eq $i
             echo -n "> "
         else
             echo -n "  "
         end
-        echo $_bait_options[$i]
+        echo $options[$i]
     end
 end
