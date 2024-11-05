@@ -1,7 +1,6 @@
-function bait
-    set command $argv[1]
+function bait --argument-names command
     switch $command
         case confirm
-            tackle -i_bait_confirm_init -u_bait_confirm_update -v_bait_confirm_view
+            tackle _bait_confirm
     end
 end
