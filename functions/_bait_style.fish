@@ -110,6 +110,7 @@ function _bait_style
         set padding 0 0 0 0
     end
 
+    set unstyle (set_color normal)
     set margin_l (string repeat -n $margin[4] ' ')
     set padding_l (string repeat -n $padding[4] ' ')
     set padding_r (string repeat -n $padding[2] ' ')
@@ -119,20 +120,18 @@ function _bait_style
         set line_len_max (math "max($line_len_max, $(string length $line))")
     end
 
-    set padding_line (string repeat -n $line_len_max ' ')
     set lines_padded $argv
     if test $padding[1] -ge 1
         for i in (seq $padding[1])
-            set --prepend lines_padded $padding_line
+            set --prepend lines_padded ''
         end
     end
     if test $padding[3] -ge 1
         for i in (seq $padding[3])
-            set --append lines_padded $padding_line
+            set --append lines_padded ''
         end
     end
 
-    set unstyle (set_color normal)
     for line in $lines_padded
         set len_diff (math $line_len_max - (string length $line))
         switch $align
@@ -144,7 +143,7 @@ function _bait_style
                 set align_pad_l (string repeat -n (math "floor($len_diff / 2)") ' ')
                 set align_pad_r (string repeat -n (math "ceil($len_diff / 2)") ' ')
         end
-        set -a lines "$margin_l$style_border$border[3]$unstyle$padding_l$align_pad_l$line$align_pad_r$padding_r$style_border$border[4]$unstyle"
+        set -a lines "$margin_l$style_border$border[3]$unstyle$padding_l$align_pad_l$style_text$line$unstyle$align_pad_r$padding_r$style_border$border[4]$unstyle"
     end
 
     if test $margin[1] -ge 1
