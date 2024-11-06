@@ -11,10 +11,10 @@ function _bait_choose --argument-names key
             set choice (math "($choice + 1)")
         case enter
             echo $options[(math "$choice + 1")]
-            set -g _tackle_exit 0
+            set -g _bait_exit 0
             return
         case escape
-            set -g _tackle_exit 1
+            set -g _bait_exit 1
             return
     end
     set choice (math "$choice % $(count $options)")

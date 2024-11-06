@@ -1,4 +1,4 @@
-function _tackle_screen
+function _bait_screen
     switch $argv[1]
         case save
             echo -ne "\e[?47h"

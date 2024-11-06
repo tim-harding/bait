@@ -21,19 +21,19 @@ function _bait_spin
         set -g _bait_spin_exited 0
     end
 
-    _tackle_cursor hide
+    bait cursor hide
     while true
         for c in ⡇ ⠏ ⠛ ⠹ ⢸ ⣰ ⣤ ⣆
             if set -q _bait_spin_exited
                 break
             end
             echo -nes "$c loading..."
-            _tackle_cursor column 1
+            bait cursor column 1
             sleep 0.03
         end
         if set -q _bait_spin_exited
             break
         end
     end
-    _tackle_cursor show
+    bait cursor show
 end

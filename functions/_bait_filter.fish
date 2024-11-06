@@ -14,7 +14,7 @@ function _bait_filter --argument-names key
         case backspace
             set query (string sub --start 1 --end -1 $query)
         case escape
-            set -g _tackle_exit 1
+            set -g _bait_exit 1
             return
         case a b c d e f g h i j k l m n o p q r s t u v w x y z
             set query (string join "" $query $key)
@@ -34,7 +34,7 @@ function _bait_filter --argument-names key
             if set -q filtered[$index]
                 echo $filtered[$index]
             end
-            set -g _tackle_exit 0
+            set -g _bait_exit 0
             return
     end
 

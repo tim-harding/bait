@@ -1,4 +1,4 @@
-function _tackle_cursor --argument-names command count
+function _bait_cursor --argument-names command count
     switch $argv[1]
         case home
             echo -ne "\e[H"
@@ -12,7 +12,7 @@ function _tackle_cursor --argument-names command count
             echo -nes "\e[?25h"
     end
 
-    if not set -q count
+    if not string length $count
         return 1
     end
 

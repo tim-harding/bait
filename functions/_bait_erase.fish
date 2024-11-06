@@ -1,4 +1,4 @@
-function _tackle_erase
+function _bait_erase
     switch $argv[1]
         case to-end
             echo -nes "\e[0J"

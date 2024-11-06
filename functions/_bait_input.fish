@@ -42,7 +42,7 @@ Flags:
     read --command "$value" \
         (set -q _flag_password; and echo --silent) \
         --prompt "set_color $style_prompt; echo -n '$prompt'" input </dev/tty
-    _tackle_cursor line-up 1 >/dev/tty
-    _tackle_erase line-all >/dev/tty
+    bait cursor line-up 1 >/dev/tty
+    bait erase line-all >/dev/tty
     echo $input
 end

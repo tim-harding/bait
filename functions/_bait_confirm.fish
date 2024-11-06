@@ -7,13 +7,13 @@ function _bait_confirm --argument-names key
         case left right
             set choice (math "($choice + 1) % 2")
         case y
-            set -g _tackle_exit 0
+            set -g _bait_exit 0
             return
         case n escape
-            set -g _tackle_exit 1
+            set -g _bait_exit 1
             return
         case enter
-            set -g _tackle_exit $choice
+            set -g _bait_exit $choice
             return
     end
 
