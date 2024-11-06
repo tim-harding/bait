@@ -7,6 +7,8 @@ function bait --argument-names command
             _bait_cursor $argv
         case screen
             _bait_screen $argv
+        case alternate
+            _bait_alternate $argv
         case erase
             _bait_erase $argv
         case cloak
