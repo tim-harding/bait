@@ -1,5 +1,5 @@
-function _bait_input -V BAIT_STYLE_PROMPT -V BAIT_STYLE_HEADER -V BAIT_STYLE_VALUE
-    argparse h/help password 'prompt=?' 'value=?' 'header=?' 'style-header=?' 'style-prompt=?' 'style-value=?' -- $argv
+function _bait_input -V BAIT_STYLE_PROMPT -V BAIT_STYLE_VALUE
+    argparse h/help password 'prompt=?' 'value=?' 'style-prompt=?' 'style-value=?' -- $argv
     or return
 
     if set -q _flag_help
@@ -11,44 +11,44 @@ Flags:
   -h, --help                     Show context-sensitive help
       --prompt='> '              Prompt to display
       --value=''                 Initial value (can also be passed via stdin)
-      --header=''                Header value
       --password                 Mask input characters
-      --style-header='blue -o'   set_color flags for header
-      --style-prompt='black'     set_color flags for prompt
-      --style-value='normal'     set_color flags for value
+      --style-prompt='black'     set_color flags for prompt (or set BAIT_STYLE_PROMPT)
+      --style-value='normal'     set_color flags for value  (or set BAIT_STYLE_VALUE)
 " &>stderr
         return
     end
 
-    set prompt $_flag_prompt "> "
-    set prompt $prompt[1]
-
-    set -q _flag_style_prompt
-    and set style_prompt $_flag_style_prompt
-    or set -q BAIT_STYLE_PROMPT
-    and set style_prompt $BAIT_STYLE_PROMPT
-    or set style_prompt black
-
-    set -q _flag_style_header
-    and set style_header $_flag_style_header
-    or set -q BAIT_STYLE_HEADER
-    and set style_header $BAIT_STYLE_HEADER
-    or set style_header blue -u
-
-    set -q _flag_style_value
-    and set style_value $_flag_style_value
-    or set -q BAIT_STYLE_VALUE
-    and set style_value $BAIT_STYLE_VALUE
-    or set style_value black
-
-    if set -q _flag_header
-        set_color $style_header
-        echo -es $_flag_header 1>&2
+    if set -q _flag_prompt
+        set prompt $_flag_prompt
+    else
+        set prompt "> "
     end
 
-    read --command "$_flag_value" \
+    if set -q _flag_value
+        set value $_flag_value
+    else if not isatty
+        read value
+    else
+        set value
+    end
+
+    if set -q _flag_style_prompt
+        set style_prompt $_flag_style_prompt
+    else if set -q BAIT_STYLE_PROMPT
+        set style_prompt $BAIT_STYLE_PROMPT
+    else
+        set style_prompt black
+    end
+
+    if set -q _flag_style_value
+        set style_value $_flag_style_value
+    else if set -q BAIT_STYLE_VALUE
+        set style_value $BAIT_STYLE_VALUE
+    else
+        set style_value black
+    end
+
+    read --command "$value" \
         (set -q _flag_password; and echo --silent) \
-        --prompt "set_color $style_prompt; echo -n '$prompt'; set_color $style_value" \
-        input
-    echo $input
+        --prompt "set_color $style_prompt; echo -n '$prompt'; set_color $style_value" </dev/tty
 end
