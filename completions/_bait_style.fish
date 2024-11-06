@@ -1,18 +1,20 @@
-complete -c _bait_style -f
-complete -c _bait_style -s h -l help -d "Show help"
-complete -c _bait_style -x -l style-border -d "Box outline styles"
-complete -c _bait_style -x -l style-text -d "Text styles"
-complete -c _bait_style -x -l margin -d "Box margins"
-complete -c _bait_style -x -l padding -d "Box padding"
+set -l bait_complete complete -c _bait_style -xk
 
-complete -c _bait_style -xk -l align -d "Text alignment"
-complete -c _bait_style -xk -l align -a "center top bottom left right"
+$bait_complete -f
+$bait_complete -s h -l help -d "Show help"
+$bait_complete -l style-border -d "Box outline styles"
+$bait_complete -l style-text -d "Text styles"
+$bait_complete -l margin -d "Box margins"
+$bait_complete -l padding -d "Box padding"
 
-complete -c _bait_style -xk -l border -d "Text box outline"
-complete -c _bait_style -xk -l border -a block -d "████"
-complete -c _bait_style -xk -l border -a thick-outer -d "▛▀▀▜"
-complete -c _bait_style -xk -l border -a thick-inner -d "▗▄▄▖"
-complete -c _bait_style -xk -l border -a double -d "╔══╗"
-complete -c _bait_style -xk -l border -a medium -d "┏━━┓"
-complete -c _bait_style -xk -l border -a thin -d "┌──┐"
-complete -c _bait_style -xk -l border -a round -d "╭──╮"
+$bait_complete -l align -d "Text alignment"
+$bait_complete -l align -a "center top bottom left right"
+
+$bait_complete -l border -d "Text box outline"
+$bait_complete -l border -a block -d "████"
+$bait_complete -l border -a thick-outer -d "▛▀▀▜"
+$bait_complete -l border -a thick-inner -d "▗▄▄▖"
+$bait_complete -l border -a double -d "╔══╗"
+$bait_complete -l border -a medium -d "┏━━┓"
+$bait_complete -l border -a thin -d "┌──┐"
+$bait_complete -l border -a round -d "╭──╮"
