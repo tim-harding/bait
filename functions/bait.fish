@@ -13,5 +13,7 @@ function bait --argument-names command
             _bait_input $argv
         case log
             _bait_log $argv
+        case box
+            _bait_box $argv
     end
 end
