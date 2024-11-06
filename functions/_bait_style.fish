@@ -9,11 +9,8 @@ function _bait_style
         return
     end
 
-    set borders none round thin medium double thick-inner thick-outer block
-
-    set border_0 " " " " " " " " " " " "
-    set border_1 ─ ─ │ │ ┌ ┐ └ ┘
-    set border_2 ─ ─ │ │ ╭ ╮ ╰ ╯
+    set border_1 ─ ─ │ │ ╭ ╮ ╰ ╯
+    set border_2 ─ ─ │ │ ┌ ┐ └ ┘
     set border_3 ━ ━ ┃ ┃ ┏ ┓ ┗ ┛
     set border_4 ═ ═ ║ ║ ╔ ╗ ╚ ╝
     set border_5 ▀ ▄ ▌ ▐ ▛ ▜ ▙ ▟
@@ -21,14 +18,25 @@ function _bait_style
     set border_7 █ █ █ █ █ █ █ █
 
     if set -q _flag_border
-        if contains $_flag_border $borders
-            set border $_flag_border
-        else
-            _bait_style_help
-            return 1
+        switch $_flag_border
+            case round
+                set border $border_1
+            case thin
+                set border $border_2
+            case medium
+                set border $border_3
+            case double
+                set border $border_4
+            case thick-inner
+                set border $border_5
+            case thick-outer
+                set border $border_6
+            case block
+                set border $border_7
+            case '*'
+                _bait_style_help
+                return 1
         end
-    else
-        set border none
     end
 
     set alignments center top bottom left right
@@ -45,31 +53,67 @@ function _bait_style
     end
 
     if set -q _flag_margin
-        if not set margins (_bait_parse_spacing $_flag_margin)
+        if not set margin (_bait_parse_spacing $_flag_margin)
             _bait_style_help
             return 1
         end
     else
-        set margins 0 0 0 0
+        set margin 0 0 0 0
     end
 
     if set -q _flag_padding
-        if not set paddings (_bait_parse_spacing $_flag_padding)
+        if not set padding (_bait_parse_spacing $_flag_padding)
             _bait_style_help
             return 1
         end
     else
-        set paddings 0 0 0 0
+        set padding 0 0 0 0
     end
+
+    set margin_left (string repeat -n $margin[3] ' ')
 
     set line_len_max 0
     for line in $argv
         set line_len_max (math "max($line_len_max, $(string length $line))")
     end
-    echo $line_len_max
 
     for line in $argv
+        set len_diff (math $line_len_max - (string length $line))
+        switch $align
+            case left top bottom
+                set align_pad_r (string repeat -n $len_diff ' ')
+            case right
+                set align_pad_l (string repeat -n $len_diff ' ')
+            case center
+                set align_pad_l (string repeat -n (math "floor($len_diff / 2)") ' ')
+                set align_pad_r (string repeat -n (math "ceil($len_diff / 2)") ' ')
+        end
+        set -a lines "$margin_left$border[3]$align_pad_l$line$align_pad_r$border[4]"
+    end
+
+    if test $margin[1] -ge 1
+        for i in (seq $margin[1])
+            echo $i
+        end
+    end
+
+    if set -q border
+        set border_repeat (math $padding[2] + $padding[4] + $line_len_max)
+        echo -s $margin_left $border[5] (string repeat -n $border_repeat $border[1]) $border[6]
+    end
+
+    for line in $lines
         echo $line
+    end
+
+    if set -q border
+        echo -s $margin_left $border[7] (string repeat -n $border_repeat $border[2]) $border[8]
+    end
+
+    if test $margin[3] -ge 1
+        for i in (seq $margin[3])
+            echo
+        end
     end
 end
 
@@ -91,7 +135,7 @@ Flags:
       --style-text=SET_COLOR      Text styles     (or BAIT_STYLE_TEXT)
 
 Arguments:
-  BORDER      none | round | thin | medium | double | thick-inner | thick-outer | block
+  BORDER      round | thin | medium | double | thick-inner | thick-outer | block
   ALIGNMENT   center | top | bottom | left | right
   SPACING     \$top \$right \$bottom \$left |
               \$vertical \$horizontal |
