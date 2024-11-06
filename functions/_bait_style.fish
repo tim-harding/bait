@@ -70,7 +70,9 @@ function _bait_style
         set padding 0 0 0 0
     end
 
-    set margin_left (string repeat -n $margin[3] ' ')
+    set margin_l (string repeat -n $margin[4] ' ')
+    set padding_l (string repeat -n $padding[4] ' ')
+    set padding_r (string repeat -n $padding[2] ' ')
 
     set line_len_max 0
     for line in $argv
@@ -88,18 +90,18 @@ function _bait_style
                 set align_pad_l (string repeat -n (math "floor($len_diff / 2)") ' ')
                 set align_pad_r (string repeat -n (math "ceil($len_diff / 2)") ' ')
         end
-        set -a lines "$margin_left$border[3]$align_pad_l$line$align_pad_r$border[4]"
+        set -a lines "$margin_l$border[3]$padding_l$align_pad_l$line$align_pad_r$padding_r$border[4]"
     end
 
     if test $margin[1] -ge 1
         for i in (seq $margin[1])
-            echo $i
+            echo
         end
     end
 
     if set -q border
         set border_repeat (math $padding[2] + $padding[4] + $line_len_max)
-        echo -s $margin_left $border[5] (string repeat -n $border_repeat $border[1]) $border[6]
+        echo -s $margin_l $border[5] (string repeat -n $border_repeat $border[1]) $border[6]
     end
 
     for line in $lines
@@ -107,7 +109,7 @@ function _bait_style
     end
 
     if set -q border
-        echo -s $margin_left $border[7] (string repeat -n $border_repeat $border[2]) $border[8]
+        echo -s $margin_l $border[7] (string repeat -n $border_repeat $border[2]) $border[8]
     end
 
     if test $margin[3] -ge 1
