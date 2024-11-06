@@ -181,7 +181,7 @@ Arguments:
   [<text>]   Lines of text to be styled
 
 Flags:
-  -h, --help                      Show context-sensitive help.
+  -h, --help                      Show context-sensitive help
       --border=BORDER             Border box kind (or BAIT_BORDER)
       --align=ALIGNMENT           Text alignment  (or BAIT_ALIGN)
       --margin=SPACING            Text margin     (or BAIT_MARGIN)

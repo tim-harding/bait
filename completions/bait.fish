@@ -14,4 +14,11 @@ complete -c bait -n "not __fish_seen_subcommand_from $commands" -a screen -d "Sa
 complete -c bait -n "not __fish_seen_subcommand_from $commands" -a alternate -d "Toggle alternative buffer"
 complete -c bait -n "not __fish_seen_subcommand_from $commands" -a erase -d "Erase screen contents"
 complete -c bait -n "not __fish_seen_subcommand_from $commands" -a cloak -d "Hide TTY output"
-# complete -c bait -n "__fish_seen_subcommand_from style" -a "$commands"
+
+complete -c bait -n "__fish_seen_subcommand_from style" -s h -l help -d "Show help"
+complete -c bait -n "__fish_seen_subcommand_from style" -l border -x -a "round thin medium double thick-inner thick-outer block" -d "Text box outline"
+complete -c bait -n "__fish_seen_subcommand_from style" -l align -x -a "center top bottom left right" -d "Text alignment"
+complete -c bait -n "__fish_seen_subcommand_from style" -l margin -x -d "Box margins"
+complete -c bait -n "__fish_seen_subcommand_from style" -l padding -x -d "Box padding"
+complete -c bait -n "__fish_seen_subcommand_from style" -l style-border -x -d "Box outline styles"
+complete -c bait -n "__fish_seen_subcommand_from style" -l style-text -x -d "Text styles"
