@@ -45,9 +45,9 @@ function _bait_style
                 set border $border_3
             case double
                 set border $border_4
-            case thick-inner
-                set border $border_5
             case thick-outer
+                set border $border_5
+            case thick-inner
                 set border $border_6
             case block
                 set border $border_7
