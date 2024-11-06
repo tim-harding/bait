@@ -1,5 +1,5 @@
-function _bait_input -V BAIT_STYLE_PROMPT -V BAIT_STYLE_VALUE
-    argparse h/help password 'prompt=?' 'value=?' 'style-prompt=?' 'style-value=?' -- $argv
+function _bait_input --inherit-variable BAIT_STYLE_PROMPT
+    argparse h/help password 'prompt=?' 'value=?' 'style-prompt=?' -- $argv
     or return
 
     if set -q _flag_help
@@ -13,7 +13,6 @@ Flags:
       --value=''                 Initial value (can also be passed via stdin)
       --password                 Mask input characters
       --style-prompt='black'     set_color flags for prompt (or set BAIT_STYLE_PROMPT)
-      --style-value='normal'     set_color flags for value  (or set BAIT_STYLE_VALUE)
 " &>stderr
         return
     end
@@ -40,15 +39,10 @@ Flags:
         set style_prompt black
     end
 
-    if set -q _flag_style_value
-        set style_value $_flag_style_value
-    else if set -q BAIT_STYLE_VALUE
-        set style_value $BAIT_STYLE_VALUE
-    else
-        set style_value black
-    end
-
     read --command "$value" \
         (set -q _flag_password; and echo --silent) \
-        --prompt "set_color $style_prompt; echo -n '$prompt'; set_color $style_value" </dev/tty
+        --prompt "set_color $style_prompt; echo -n '$prompt'" input </dev/tty
+    _tackle_cursor line-up 1 >/dev/tty
+    _tackle_erase line-all >/dev/tty
+    echo $input
 end
