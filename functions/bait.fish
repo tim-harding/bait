@@ -3,17 +3,15 @@ function bait --argument-names command
     switch $command
         case confirm
             tackle _bait_confirm $argv
-
         case choose
             tackle _bait_choose $argv
-
         case spin
             _bait_spin $argv
-
         case filter
             tackle _bait_filter $argv
-
         case input
             _bait_input $argv
+        case log
+            _bait_log $argv
     end
 end
