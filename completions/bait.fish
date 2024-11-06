@@ -4,10 +4,6 @@ function _bait_complete_command --wraps complete
     complete -c bait -n "not __fish_seen_subcommand_from $commands" -k $argv
 end
 
-function _bait_complete --wraps complete --argument-names command
-    complete -c bait -n "__fish_seen_subcommand_from $command" $argv[2..]
-end
-
 complete -c bait -f
 _bait_complete_command -a ui -d "Run functional UI"
 _bait_complete_command -a alternate -d "Toggle alternative buffer"
@@ -23,10 +19,4 @@ _bait_complete_command -a filter -d "Filtering selection UI"
 _bait_complete_command -a choose -d "Option selection form"
 _bait_complete_command -a confirm -d "Binary response form"
 
-_bait_complete style -s h -l help -d "Show help"
-_bait_complete style -l style-border -x -d "Box outline styles"
-_bait_complete style -l style-text -x -d "Text styles"
-_bait_complete style -l margin -x -d "Box margins"
-_bait_complete style -l padding -x -d "Box padding"
-_bait_complete style -l align -x -a "center top bottom left right" -d "Text alignment"
-_bait_complete style -l border -x -a "round thin medium double thick-inner thick-outer block" -d "Text box outline"
+complete -c bait -n "__fish_seen_subcommand_from style" --wraps _bait_style
