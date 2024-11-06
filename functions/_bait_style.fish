@@ -79,7 +79,20 @@ function _bait_style
         set line_len_max (math "max($line_len_max, $(string length $line))")
     end
 
-    for line in $argv
+    set padding_line (string repeat -n $line_len_max ' ')
+    set lines_padded $argv
+    if test $padding[1] -ge 1
+        for i in (seq $padding[1])
+            set --prepend lines_padded $padding_line
+        end
+    end
+    if test $padding[3] -ge 1
+        for i in (seq $padding[3])
+            set --append lines_padded $padding_line
+        end
+    end
+
+    for line in $lines_padded
         set len_diff (math $line_len_max - (string length $line))
         switch $align
             case left top bottom
