@@ -1,5 +1,5 @@
 function _bait_spin
-    if not argparse --stop-nonopt h/help show-output show-error 'title=' \
+    if not argparse --stop-nonopt h/help show-output show-error style-spinner= style-title= title= \
             'speed=!_fish_validate_int --min 1' \
             'spinner=!contains $_flag_value dot line minidot pulse points' \
             'align=!contains $_flag_value left right' -- $argv
@@ -10,6 +10,20 @@ function _bait_spin
     if set -q _flag_help
         _bait_spin_help
         return
+    end
+
+    set unstyle (set_color normal)
+
+    if set -q _flag_style_spinner
+        set style_spinner $_flag_style_spinner
+    else if set -q BAIT_STYLE_SPINNER
+        set style_spinner $BAIT_STYLE_SPINNER
+    end
+
+    if set -q _flag_style_title
+        set style_title $_flag_style_title
+    else if set -q BAIT_STYLE_TITLE
+        set style_title $BAIT_STYLE_TITLE
     end
 
     set spinner_1 ⣾ ⣽ ⣻ ⢿ ⡿ ⣟ ⣯ ⣷
@@ -66,7 +80,7 @@ function _bait_spin
             if set -q $exited
                 break
             end
-            echo -ns "$c $title" >/dev/tty
+            echo -ns $style_spinner $c $unstyle ' ' $style_title $title $unstyle >/dev/tty
             bait cursor column 1 >/dev/tty
             sleep (math 1 / $speed)
         end
