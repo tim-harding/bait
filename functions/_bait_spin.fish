@@ -1,5 +1,5 @@
 function _bait_spin
-    if not argparse --stop-nonopt h/help show-output show-error style-spinner= style-title= title= \
+    if not argparse --stop-nonopt h/help o/stdout e/stderr style-spinner= style-title= title= \
             'speed=!_fish_validate_int --min 1' \
             'spinner=!contains $_flag_value dot line minidot pulse points' \
             'align=!contains $_flag_value left right' -- $argv
@@ -57,14 +57,26 @@ function _bait_spin
         set speed $_flag_speed
     end
 
-    $argv &
+    if set -q _flag_stdout
+        if set -q _flag_stderr
+            $argv &
+        else
+            $argv 2>/dev/null &
+        end
+    else
+        if set -q _flag_stderr
+            $argv 1>/dev/null &
+        else
+            $argv &>/dev/null &
+        end
+    end
     set -l exit_code $status
-    if not set last_pid
+    if not set -q last_pid
         return $exit_code
     end
-    set -l exited _bait_spin_exited_$pid
+    set -l exited _bait_spin_exited_$last_pid
 
-    function _bait_spin_handle_exit --on-process-exit $pid -V exited --argument-names reason pid exit_code
+    function _bait_spin_handle_exit --on-process-exit $last_pid -V exited --argument-names reason pid exit_code
         set -g $exited $exit_code
     end
 
@@ -106,8 +118,8 @@ Display spinner while running a command
 
 Flags:
   -h, --help                  Show context-sensitive help.
-      --show-output           Show or pipe output of command during execution
-      --show-error            Show output of command only if the command fails
+  -o, --stdout                Include command stdout in output
+  -e, --stdout                Include command stderr in output
       --speed=8               Animation frame frequency
   -s, --spinner='dot'         Spinner type
       --title='Working...'    Text to display to user while spinning
