@@ -12,32 +12,27 @@ function _bait_spin
         return
     end
 
-    set unstyle (set_color normal)
+    set -l unstyle (set_color normal)
 
-    if set -q _flag_style_spinner
-        set style_spinner $_flag_style_spinner
-    else if set -q BAIT_STYLE_SPINNER
-        set style_spinner $BAIT_STYLE_SPINNER
-    end
+    set -q BAIT_STYLE_SPINNER
+    and set -l style_spinner $BAIT_STYLE_SPINNER
+    set -q _flag_style_spinner
+    and set -l style_spinner $_flag_style_spinner
 
-    if set -q _flag_style_title
-        set style_title $_flag_style_title
-    else if set -q BAIT_STYLE_TITLE
-        set style_title $BAIT_STYLE_TITLE
-    end
+    set -q BAIT_STYLE_TITLE
+    and set -l style_title $BAIT_STYLE_TITLE
+    set -q _flag_style_title
+    and set -l style_title $_flag_style_title
 
-    if set -q _flag_align
-        set align $_flag_align
-    else
-        set align left
-    end
+    set -l align left
+    set -q _flag_align
+    and set align $_flag_align
 
-    if set -q _flag_spinner
-        set spinner_kind $_flag_spinner
-    else
-        set spinner_kind dot
-    end
+    set -l spinner_kind dot
+    set -q _flag_spinner
+    and set spinner_kind $_flag_spinner
 
+    set -l spinner
     switch $spinner_kind
         case dot
             set spinner ⣾ ⣽ ⣻ ⢿ ⡿ ⣟ ⣯ ⣷
@@ -51,25 +46,23 @@ function _bait_spin
             set spinner / - \\ \|
     end
 
+    set -l title 'Working...'
     if set -q _flag_title
         set title $_flag_title
-    else
-        set title 'Working...'
     end
     set title $style_title $title $unstyle
 
+    set -l speed 8
     if set -q _flag_speed
         set speed $_flag_speed
-    else
-        set speed 8
     end
 
     $argv &
-    set exit_code $status
+    set -l exit_code $status
     if not set pid (jobs --last --pid)
         return $exit_code
     end
-    set exited _bait_spin_exited_$pid
+    set -l exited _bait_spin_exited_$pid
 
     function _bait_spin_handle_exit --on-process-exit $pid -V exited --argument-names reason pid exit_code
         set -g $exited $exit_code
@@ -83,6 +76,9 @@ function _bait_spin
             end
 
             set c $style_spinner $c $unstyle
+
+            set -l align_l
+            set -l align_r
             switch $align
                 case left
                     set align_l $c

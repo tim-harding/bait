@@ -9,80 +9,64 @@ function _bait_style
         return
     end
 
-    if set -q _flag_style_text
-        set style_text $_flag_style_text
-    else if set -q BAIT_STYLE_TEXT
-        set style_text $BAIT_STYLE_TEXT
+    set -q BAIT_STYLE_TEXT
+    and set -l style_text $BAIT_STYLE_TEXT
+    set -q _flag_style_text
+    and set -l style_text $_flag_style_text
+
+    set -q BAIT_STYLE_BORDER
+    and set -l style_border $BAIT_STYLE_BORDER
+    set -q _flag_style_border
+    and set -l style_border $_flag_style_border
+
+    set -q BAIT_BORDER
+    and set -l border_kind $BAIT_BORDER
+    set -q _flag_border
+    and set -l border_kind $_flag_border
+
+    set -q border_kind
+    and set -l border
+    and switch $border_kind
+        case round
+            set border ─ ─ │ │ ╭ ╮ ╰ ╯
+        case thin
+            set border ─ ─ │ │ ┌ ┐ └ ┘
+        case medium
+            set border ━ ━ ┃ ┃ ┏ ┓ ┗ ┛
+        case double
+            set border ═ ═ ║ ║ ╔ ╗ ╚ ╝
+        case thick-outer
+            set border ▀ ▄ ▌ ▐ ▛ ▜ ▙ ▟
+        case thick-inner
+            set border ▄ ▀ ▐ ▌ ▗ ▖ ▝ ▘
+        case block
+            set border █ █ █ █ █ █ █ █
+        case '*'
+            echo "Unknown border $border_kind" 1>&2
+            _bait_style_help
+            return 1
     end
 
-    if set -q _flag_style_border
-        set style_border $_flag_style_border
-    else if set -q BAIT_STYLE_BORDER
-        set style_border $BAIT_STYLE_BORDER
-    end
+    set -q BAIT_ALIGN
+    and set align_kind $BAIT_ALIGN
+    set -q _flag_align
+    and set align_kind $_flag_align
 
-    set border_1 ─ ─ │ │ ╭ ╮ ╰ ╯
-    set border_2 ─ ─ │ │ ┌ ┐ └ ┘
-    set border_3 ━ ━ ┃ ┃ ┏ ┓ ┗ ┛
-    set border_4 ═ ═ ║ ║ ╔ ╗ ╚ ╝
-    set border_5 ▀ ▄ ▌ ▐ ▛ ▜ ▙ ▟
-    set border_6 ▄ ▀ ▐ ▌ ▗ ▖ ▝ ▘
-    set border_7 █ █ █ █ █ █ █ █
-
-    if set -q _flag_border
-        set border_kind $_flag_border
-    else if set -q BAIT_BORDER
-        set border_kind $BAIT_BORDER
-    end
-
-    if set -q border_kind
-        switch $border_kind
-            case round
-                set border $border_1
-            case thin
-                set border $border_2
-            case medium
-                set border $border_3
-            case double
-                set border $border_4
-            case thick-outer
-                set border $border_5
-            case thick-inner
-                set border $border_6
-            case block
-                set border $border_7
-            case '*'
-                echo "Unknown border $border_kind" 1>&2
-                _bait_style_help
-                return 1
-        end
-    end
-
-    set alignments center top bottom left right
-
-    if set -q _flag_align
-        set align_kind $_flag_align
-    else if set -q BAIT_ALIGN
-        set align_kind $BAIT_ALIGN
-    end
-
+    set -l align left
     if set -q align_kind
-        if contains $align_kind $alignments
+        if contains $align_kind center top bottom left right
             set align $align_kind
         else
             echo "Unknown alignment $align" 1>&2
             _bait_style_help
             return 1
         end
-    else
-        set align left
     end
 
-    if set -q _flag_margin
-        set margin $_flag_margin
-    else if set -q BAIT_MARGIN
-        set margin $BAIT_MARGIN
-    end
+    set -q _flag_margin
+    and set -l margin $_flag_margin
+    set -q BAIT_MARGIN
+    and set -l margin $BAIT_MARGIN
 
     if set -q margin
         if not set margin (_bait_parse_spacing $margin)
@@ -94,11 +78,10 @@ function _bait_style
         set margin 0 0 0 0
     end
 
-    if set -q _flag_padding
-        set padding $_flag_padding
-    else if set -q BAIT_PADDING
-        set padding $BAIT_PADDING
-    end
+    set -q _flag_padding
+    and set -l padding $_flag_padding
+    set -q BAIT_PADDING
+    and set -l padding $BAIT_PADDING
 
     if set -q padding
         if not set padding (_bait_parse_spacing $padding)
@@ -110,17 +93,17 @@ function _bait_style
         set padding 0 0 0 0
     end
 
-    set unstyle (set_color normal)
-    set margin_l (string repeat -n $margin[4] ' ')
-    set padding_l (string repeat -n $padding[4] ' ')
-    set padding_r (string repeat -n $padding[2] ' ')
+    set -l unstyle (set_color normal)
+    set -l margin_l (string repeat -n $margin[4] ' ')
+    set -l padding_l (string repeat -n $padding[4] ' ')
+    set -l padding_r (string repeat -n $padding[2] ' ')
 
-    set line_len_max 0
+    set -l line_len_max 0
     for line in $argv
         set line_len_max (math "max($line_len_max, $(string length $line))")
     end
 
-    set lines_padded $argv
+    set -l lines_padded $argv
     if test $padding[1] -ge 1
         for i in (seq $padding[1])
             set --prepend lines_padded ''
@@ -132,8 +115,9 @@ function _bait_style
         end
     end
 
+    set -l lines
     for line in $lines_padded
-        set len_diff (math $line_len_max - (string length $line))
+        set -l len_diff (math $line_len_max - (string length $line))
         switch $align
             case left top bottom
                 set align_pad_r (string repeat -n $len_diff ' ')
@@ -152,8 +136,8 @@ function _bait_style
         end
     end
 
+    set -l border_repeat (math $padding[2] + $padding[4] + $line_len_max)
     if set -q border
-        set border_repeat (math $padding[2] + $padding[4] + $line_len_max)
         echo -s $margin_l $style_border $border[5] (string repeat -n $border_repeat $border[1]) $border[6] $unstyle
     end
 
