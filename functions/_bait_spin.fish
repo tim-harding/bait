@@ -49,6 +49,7 @@ function _bait_spin
         set speed 8
     end
 
+    # Todo: Doesn't work for functions
     $argv &
     if not set pid (jobs --last --pid)
         return
@@ -58,21 +59,18 @@ function _bait_spin
         set -g _bait_spin_exited_$pid 0
     end
 
-    bait cursor hide
-    while true
+    bait cursor hide >/dev/tty
+    while not set -q _bait_spin_exited_$pid
         for c in $spinner
             if set -q _bait_spin_exited_$pid
                 break
             end
-            echo -ns "$c $title"
-            bait cursor column 1
+            echo -ns "$c $title" >/dev/tty
+            bait cursor column 1 >/dev/tty
             sleep (math 1 / $speed)
         end
-        if set -q _bait_spin_exited
-            break
-        end
     end
-    bait cursor show
+    bait cursor show >/dev/tty
 end
 
 function _bait_spin_help
