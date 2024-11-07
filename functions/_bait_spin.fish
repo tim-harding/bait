@@ -49,20 +49,21 @@ function _bait_spin
         set speed 8
     end
 
-    # Todo: Doesn't work for functions
     $argv &
+    set exit_code $status
     if not set pid (jobs --last --pid)
-        return
+        return $exit_code
     end
+    set exited _bait_spin_exited_$pid
 
-    function _bait_spin_handle_exit --on-process-exit $pid --inherit-variable pid
-        set -g _bait_spin_exited_$pid 0
+    function _bait_spin_handle_exit --on-process-exit $pid -V exited --argument-names reason pid exit_code
+        set -g $exited $exit_code
     end
 
     bait cursor hide >/dev/tty
-    while not set -q _bait_spin_exited_$pid
+    while not set -q $exited
         for c in $spinner
-            if set -q _bait_spin_exited_$pid
+            if set -q $exited
                 break
             end
             echo -ns "$c $title" >/dev/tty
@@ -71,6 +72,8 @@ function _bait_spin
         end
     end
     bait cursor show >/dev/tty
+
+    return $$exited
 end
 
 function _bait_spin_help
