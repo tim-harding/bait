@@ -59,7 +59,7 @@ function _bait_spin
 
     $argv &
     set -l exit_code $status
-    if not set pid (jobs --last --pid)
+    if not set last_pid
         return $exit_code
     end
     set -l exited _bait_spin_exited_$pid
