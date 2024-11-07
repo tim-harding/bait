@@ -1,7 +1,7 @@
-function _bait_cursor --argument-names command count
+function _bait_cursor
     switch $argv[1]
         case home
-            echo -ne "\e[H"
+            echo -nes "\e[H"
         case save
             echo -nes "\e[s"
         case restore
@@ -12,9 +12,10 @@ function _bait_cursor --argument-names command count
             echo -nes "\e[?25h"
     end
 
-    if not string length $count
+    if not set -q argv[2]; or not string match --regex '^\d+$' $argv[2] >/dev/null
         return 1
     end
+    set count $argv[2]
 
     if test $count -eq 0
         return

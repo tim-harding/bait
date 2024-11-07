@@ -1,4 +1,3 @@
-# TODO: argparse-based argument validation
 function _bait_style
     if not argparse h/help 'border=' 'align=' 'margin=' 'padding=' 'style-border=' 'style-text=' -- $argv
         _bait_style_help

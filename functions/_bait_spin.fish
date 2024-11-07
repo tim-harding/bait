@@ -1,39 +1,92 @@
 function _bait_spin
-    for i in (seq (count $argv))
-        set arg $argv[$i]
-        if test $arg = --
-            set subcommand_index (math "$i + 1")
-            break
-        end
+    if not argparse --stop-nonopt h/help show-output show-error 'title=' \
+            'speed=!_fish_validate_int --min 1' \
+            'spinner=!contains $_flag_value dot line minidot pulse points' \
+            'align=!contains $_flag_value left right' -- $argv
+        _bait_spin_help
+        return 1
     end
 
-    if not set -q subcommand_index
+    if set -q _flag_help
+        _bait_spin_help
         return
     end
 
-    $argv[$subcommand_index..] &
+    set spinner_1 ⣾ ⣽ ⣻ ⢿ ⡿ ⣟ ⣯ ⣷
+    set spinner_2 ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏
+    set spinner_3 █ ▓ ▒ ░ " " ▒ ▓
+    set spinner_4 ∙∙∙ ●∙∙ ∙●∙ ∙∙●
+    set spinner_5 / - \\ \|
 
+    if set -q _flag_spinner
+        set spinner_kind $_flag_spinner
+    else
+        set spinner_kind dot
+    end
+
+    switch $spinner_kind
+        case dot
+            set spinner $spinner_1
+        case minidot
+            set spinner $spinner_2
+        case pulse
+            set spinner $spinner_3
+        case points
+            set spinner $spinner_4
+        case line
+            set spinner $spinner_5
+    end
+
+    if set -q _flag_title
+        set title $_flag_title
+    else
+        set title 'Working...'
+    end
+
+    if set -q _flag_speed
+        set speed $_flag_speed
+    else
+        set speed 8
+    end
+
+    $argv &
     if not set pid (jobs --last --pid)
         return
     end
 
-    function _bait_spin_handle_exit --on-process-exit $pid
-        set -g _bait_spin_exited 0
+    function _bait_spin_handle_exit --on-process-exit $pid --inherit-variable pid
+        set -g _bait_spin_exited_$pid 0
     end
 
     bait cursor hide
     while true
-        for c in ⡇ ⠏ ⠛ ⠹ ⢸ ⣰ ⣤ ⣆
-            if set -q _bait_spin_exited
+        for c in $spinner
+            if set -q _bait_spin_exited_$pid
                 break
             end
-            echo -nes "$c loading..."
+            echo -ns "$c $title"
             bait cursor column 1
-            sleep 0.03
+            sleep (math 1 / $speed)
         end
         if set -q _bait_spin_exited
             break
         end
     end
     bait cursor show
+end
+
+function _bait_spin_help
+    echo -n "Usage: bait spin [flags] -- <command>
+
+Display spinner while running a command
+
+Flags:
+  -h, --help                  Show context-sensitive help.
+      --show-output           Show or pipe output of command during execution
+      --show-error            Show output of command only if the command fails
+      --speed=8               Animation frame frequency
+  -s, --spinner='dot'         Spinner type
+      --title='Working...'    Text to display to user while spinning
+  -a, --align='left'          Alignment of spinner with regard to the title
+" 1>&2
 end
