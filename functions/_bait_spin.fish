@@ -32,12 +32,6 @@ function _bait_spin
         set align left
     end
 
-    set spinner_1 ⣾ ⣽ ⣻ ⢿ ⡿ ⣟ ⣯ ⣷
-    set spinner_2 ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏
-    set spinner_3 █ ▓ ▒ ░ " " ▒ ▓
-    set spinner_4 ∙∙∙ ●∙∙ ∙●∙ ∙∙●
-    set spinner_5 / - \\ \|
-
     if set -q _flag_spinner
         set spinner_kind $_flag_spinner
     else
@@ -46,15 +40,15 @@ function _bait_spin
 
     switch $spinner_kind
         case dot
-            set spinner $spinner_1
+            set spinner ⣾ ⣽ ⣻ ⢿ ⡿ ⣟ ⣯ ⣷
         case minidot
-            set spinner $spinner_2
+            set spinner ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏
         case pulse
-            set spinner $spinner_3
+            set spinner █ ▓ ▒ ░ " " ▒ ▓
         case points
-            set spinner $spinner_4
+            set spinner ∙∙∙ ●∙∙ ∙●∙ ∙∙●
         case line
-            set spinner $spinner_5
+            set spinner / - \\ \|
     end
 
     if set -q _flag_title
