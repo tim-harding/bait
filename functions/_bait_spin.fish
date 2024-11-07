@@ -26,6 +26,12 @@ function _bait_spin
         set style_title $BAIT_STYLE_TITLE
     end
 
+    if set -q _flag_align
+        set align $_flag_align
+    else
+        set align left
+    end
+
     set spinner_1 ⣾ ⣽ ⣻ ⢿ ⡿ ⣟ ⣯ ⣷
     set spinner_2 ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏
     set spinner_3 █ ▓ ▒ ░ " " ▒ ▓
@@ -56,6 +62,7 @@ function _bait_spin
     else
         set title 'Working...'
     end
+    set title $style_title $title $unstyle
 
     if set -q _flag_speed
         set speed $_flag_speed
@@ -80,7 +87,18 @@ function _bait_spin
             if set -q $exited
                 break
             end
-            echo -ns $style_spinner $c $unstyle ' ' $style_title $title $unstyle >/dev/tty
+
+            set c $style_spinner $c $unstyle
+            switch $align
+                case left
+                    set align_l $c
+                    set align_r $title
+                case right
+                    set align_l $title
+                    set align_r $c
+            end
+
+            echo -ns $align_l ' ' $align_r >/dev/tty
             bait cursor column 1 >/dev/tty
             sleep (math 1 / $speed)
         end
