@@ -99,7 +99,8 @@ function _bait_spin
 end
 
 function _bait_spin_help
-    echo -n "Usage: bait spin [flags] -- <command>
+    echo -n "\
+Usage: bait spin [flags] -- <command>
 
 Display spinner while running a command
 

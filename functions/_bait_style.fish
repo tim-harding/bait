@@ -157,7 +157,8 @@ function _bait_style
 end
 
 function _bait_style_help
-    echo -n "Usage: bait style [flags] [<text>]
+    echo -n "\
+Usage: bait style [flags] [<text>]
 
 Apply styling to text
 
