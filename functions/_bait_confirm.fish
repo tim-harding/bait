@@ -1,5 +1,8 @@
 function _bait_confirm --argument-names key
-    argparse h/help y/default-yes affirmative= negative= style-text= style-selected= style-unselected= -- $argv
+    # TODO: 
+    # Rerunning this every update. 
+    # Maybe invert it so we call UI functions. 
+    argparse h/help y/default-yes affirmative= negative= style-text= style-selected= style-unselected= -- $argv[2..]
     or begin
         _bait_confirm_help
         return 1
@@ -18,7 +21,7 @@ function _bait_confirm --argument-names key
     end
 
     switch $key
-        case left right
+        case left right h l
             set _bait_confirm_state (math "($_bait_confirm_state + 1) % 2")
         case y
             set -g _bait_exit 0

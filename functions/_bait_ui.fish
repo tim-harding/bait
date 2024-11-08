@@ -1,7 +1,17 @@
 function _bait_ui --argument-names fn
-    if not set -q fn
+    if test -z $fn
         return 1
     end
+
+    set -l old \
+        (functions fish_prompt) \
+        (functions fish_right_prompt) \
+        (functions fish_mode_prompt)
+
+    _bait_keybind
+    set -l old_bind_mode $fish_bind_mode
+    set fish_bind_mode bait
+    commandline -f repaint-mode
 
     function fish_prompt
     end
@@ -10,43 +20,37 @@ function _bait_ui --argument-names fn
     function fish_mode_prompt
     end
 
-    for key in a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z 0 1 2 3 4 5 6 7 8 9 \$ \\ \* \? \~ \# \( \) \{ \} \[ \] \< \> \& \| \; \" \'
-        bind $key "_bait_key $key"
-    end
-
-    bind \e\[D "_bait_key left"
-    bind \e\[C "_bait_key right"
-    bind \e\[A "_bait_key up"
-    bind \e\[B "_bait_key down"
-    bind " " "_bait_key space"
-    bind \r "_bait_key enter"
-    bind \t "_bait_key tab"
-    bind \x7F "_bait_key backspace"
-    bind \e "_bait_key escape"
-
+    set -l input ""
+    set -l compensate
     bait cursor hide
     while true
-        if set -q input
-            set compensate (bait cursor up (count $lines)) \
-                (bait cloak show) \
-                (bait cursor line-up 1)
-            set lines ($fn $input)
-        else
-            set lines ($fn $argv[2..])
-        end
+        set lines ($fn $input $argv[2..])
 
-        echo -es $compensate \
+        echo -ns $compensate \
             (bait erase to-end) \
-            (set_color normal) \
-            (string join "\n" $lines)
+            (set_color normal) >/dev/tty
 
         if set -q _bait_exit
             bait cursor show
-            exit $_bait_exit
+            for line in $lines
+                echo $line
+            end
+            break
         end
 
+        string join \n $lines >/dev/tty
         read --prompt "bait cloak hide" input
+        set compensate \
+            (bait cursor line-up (math 1 + (count $lines))) \
+            (bait cloak show)
     end
+
+    string join \n $old | source
+    set fish_bind_mode $old_bind_mode
+
+    set -l _bait_exit_temp $_bait_exit
+    set --erase _bait_exit
+    return $_bait_exit_temp
 end
 
 function _bait_key

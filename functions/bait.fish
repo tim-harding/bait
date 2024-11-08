@@ -1,8 +1,6 @@
 function bait --argument-names command
     set --erase argv[1]
     switch $command
-        case ui
-            fish --init-command "_bait_ui $argv"
         case cursor
             _bait_cursor $argv
         case screen
@@ -14,9 +12,9 @@ function bait --argument-names command
         case cloak
             _bait_cloak $argv
         case confirm
-            bait ui _bait_confirm $argv
+            _bait_ui _bait_confirm $argv
         case choose
-            bait ui _bait_choose $argv
+            _bait_ui _bait_choose $argv
         case spin
             _bait_spin $argv
         case filter
