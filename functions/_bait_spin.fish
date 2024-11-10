@@ -14,13 +14,9 @@ function _bait_spin
 
     set -l unstyle (set_color normal)
 
-    set -q BAIT_STYLE_SPINNER
-    and set -l style_spinner $BAIT_STYLE_SPINNER
     set -q _flag_style_spinner
     and set -l style_spinner $_flag_style_spinner
 
-    set -q BAIT_STYLE_TITLE
-    and set -l style_title $BAIT_STYLE_TITLE
     set -q _flag_style_title
     and set -l style_title $_flag_style_title
 
