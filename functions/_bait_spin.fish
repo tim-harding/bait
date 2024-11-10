@@ -76,7 +76,7 @@ function _bait_spin
         set -g $exited $exit_code
     end
 
-    bait cursor hide >/dev/tty
+    _bait_cursor hide >/dev/tty
     while not set -q $exited
         for c in $spinner
             if set -q $exited
@@ -97,11 +97,11 @@ function _bait_spin
             end
 
             echo -ns $align_l ' ' $align_r >/dev/tty
-            bait cursor column 1 >/dev/tty
+            _bait_cursor column 1 >/dev/tty
             sleep (math 1 / $speed)
         end
     end
-    bait cursor show >/dev/tty
+    _bait_cursor show >/dev/tty
 
     return $$exited
 end

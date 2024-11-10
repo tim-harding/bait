@@ -16,5 +16,5 @@ function _bait_ui_setup
     function fish_mode_prompt
     end
 
-    bait cursor hide
+    _bait_cursor hide
 end
