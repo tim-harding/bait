@@ -9,18 +9,12 @@ function _bait_style
         return
     end
 
-    set -q BAIT_STYLE_TEXT
-    and set -l style_text $BAIT_STYLE_TEXT
     set -q _flag_style_text
     and set -l style_text $_flag_style_text
 
-    set -q BAIT_STYLE_BORDER
-    and set -l style_border $BAIT_STYLE_BORDER
     set -q _flag_style_border
     and set -l style_border $_flag_style_border
 
-    set -q BAIT_BORDER
-    and set -l border_kind $BAIT_BORDER
     set -q _flag_border
     and set -l border_kind $_flag_border
 
@@ -47,8 +41,6 @@ function _bait_style
             return 1
     end
 
-    set -q BAIT_ALIGN
-    and set align_kind $BAIT_ALIGN
     set -q _flag_align
     and set align_kind $_flag_align
 
@@ -65,8 +57,6 @@ function _bait_style
 
     set -q _flag_margin
     and set -l margin $_flag_margin
-    set -q BAIT_MARGIN
-    and set -l margin $BAIT_MARGIN
 
     if set -q margin
         if not set margin (_bait_parse_spacing $margin)
@@ -80,8 +70,6 @@ function _bait_style
 
     set -q _flag_padding
     and set -l padding $_flag_padding
-    set -q BAIT_PADDING
-    and set -l padding $BAIT_PADDING
 
     if set -q padding
         if not set padding (_bait_parse_spacing $padding)
@@ -167,12 +155,12 @@ Arguments:
 
 Flags:
   -h, --help                      Show context-sensitive help
-      --border=BORDER             Border box kind (or BAIT_BORDER)
-      --align=ALIGNMENT           Text alignment  (or BAIT_ALIGN)
-      --margin=SPACING            Text margin     (or BAIT_MARGIN)
-      --padding=SPACING           Text padding    (or BAIT_PADDING)
-      --style-border=SET_COLOR    Border styles   (or BAIT_STYLE_BORDER)
-      --style-text=SET_COLOR      Text styles     (or BAIT_STYLE_TEXT)
+      --border=BORDER             Border box kind
+      --align=ALIGNMENT           Text alignment
+      --margin=SPACING            Text margin
+      --padding=SPACING           Text padding
+      --style-border=SET_COLOR    Border styles
+      --style-text=SET_COLOR      Text styles
 
 Arguments:
   BORDER      round | thin | medium | double | thick-inner | thick-outer | block
