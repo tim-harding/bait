@@ -13,3 +13,8 @@ function _bait_keybind
     bind -M bait \x7F "_bait_key backspace"
     bind -M bait \e "_bait_key escape"
 end
+
+function _bait_key
+    commandline --insert $argv
+    commandline --function execute
+end

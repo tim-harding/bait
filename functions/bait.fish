@@ -12,13 +12,13 @@ function bait --argument-names command
         case cloak
             _bait_cloak $argv
         case confirm
-            _bait_ui _bait_confirm $argv
+            _bait_confirm $argv
         case choose
-            _bait_ui _bait_choose $argv
+            _bait_choose $argv
         case spin
             _bait_spin $argv
         case filter
-            bait ui _bait_filter $argv
+            _bait_filter $argv
         case input
             _bait_input $argv
         case log

@@ -1,8 +1,13 @@
-function _bait_confirm --argument-names key
-    # TODO: 
-    # Rerunning this every update. 
-    # Maybe invert it so we call UI functions. 
-    argparse h/help y/default-yes affirmative= negative= style-text= style-selected= style-unselected= -- $argv[2..]
+function _bait_confirm
+    argparse \
+        h/help \
+        y/default-yes \
+        affirmative= \
+        negative= \
+        style-text= \
+        style-selected= \
+        style-unselected= \
+        -- $argv[2..]
     or begin
         _bait_confirm_help
         return 1
@@ -14,25 +19,9 @@ function _bait_confirm --argument-names key
         return
     end
 
-    if not set -q _bait_confirm_state
-        set -q _flag_default_yes
-        and set -g _bait_confirm_state 0
-        or set -g _bait_confirm_state 1
-    end
-
-    switch $key
-        case left right h l
-            set _bait_confirm_state (math "($_bait_confirm_state + 1) % 2")
-        case y
-            set -g _bait_exit 0
-            return
-        case n escape
-            set -g _bait_exit 1
-            return
-        case enter
-            set -g _bait_exit $_bait_confirm_state
-            return
-    end
+    set -q _flag_default_yes
+    and set -l state 0
+    or set -l state 1
 
     set -l style_text (set_color normal)
     set -q _flag_style_text
@@ -58,18 +47,37 @@ function _bait_confirm --argument-names key
     test (count $argv) -ge 1
     and set text $argv
 
-    set -l style_yes
-    set -l style_no
-    if test $_bait_confirm_state -eq 0
-        set style_yes $style_selected
-        set style_no $style_unselected
-    else
-        set style_yes $style_unselected
-        set style_no $style_selected
+    _bait_ui_setup
+    while true
+        set -l style_yes
+        set -l style_no
+        if test $state -eq 0
+            set style_yes $style_selected
+            set style_no $style_unselected
+        else
+            set style_yes $style_unselected
+            set style_no $style_selected
+        end
+
+        _bait_ui_io $style_text $text \n \
+            $style_yes "  $yes  " (set_color normal) "  " $style_no "  $no  "
+
+        switch $_bait_ui_input
+            case left right h l
+                set state (math "($state + 1) % 2")
+            case y
+                set state 0
+                break
+            case n escape
+                set state 1
+                break
+            case enter
+                break
+        end
     end
 
-    echo -s $style_text $text
-    echo -s $style_yes "  $yes  " (set_color normal) "  " $style_no "  $no  "
+    _bait_ui_teardown
+    return $state
 end
 
 function _bait_confirm_help
