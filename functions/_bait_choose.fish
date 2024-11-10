@@ -1,3 +1,5 @@
+# TODO: 
+# - Support multiselect
 function _bait_choose
     argparse \
         h/help \
@@ -18,38 +20,66 @@ function _bait_choose
         return
     end
 
+    set -l options $argv
+    if not isatty stdin
+        while read line
+            set -a options line
+        end
+    end
+
     set -l choice 0
+    set -l query ""
     set -l exit_code 0
+    set -l filtered $options
+    set -l filtered_len (count $filtered)
 
     _bait_ui_setup
     while true
-        set -l lines Choose: \n
-        for i in (seq (count $argv))
-            if test (math $choice + 1) -eq $i
+        set -l lines Choose: $query \n
+        for i in (seq $filtered_len)
+            if test (math "$i - 1") -eq $choice
                 set -a lines "> "
             else
                 set -a lines "  "
             end
-            set -a lines $argv[$i] \n
+            set -a lines $filtered[$i] \n
         end
         _bait_ui_io $lines
 
         switch $_bait_ui_input
-            case up
-                set choice (math $choice - 1 + (count $argv))
-            case down
-                set choice (math $choice + 1)
-            case enter
-                break
-            case escape
+            case escape cancel
                 set exit_code 1
                 break
+            case a b c d e f g h i j k l m n o p q r s t u v w x y z A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+                set query (string join "" $query $_bait_ui_input)
+            case backspace
+                set query (string sub --start 1 --end -1 $query)
+            case \cW
+                set query ""
         end
-        set choice (math $choice % (count $argv))
+
+        set filtered (string match "*$query*" $options)
+        set filtered_len (count $filtered)
+        set choice (math "min($choice, max(0, $filtered_len - 1))")
+
+        switch $_bait_ui_input
+            case down
+                set choice (math "($choice + 1) % $filtered_len")
+            case up
+                set choice (math "($choice - 1 + $filtered_len) % $filtered_len")
+            case enter
+                break
+        end
     end
 
     _bait_ui_teardown
-    echo $argv[(math $choice + 1)]
+    if test $exit_code -eq 0
+        set -l index (math "$choice + 1")
+        if set -q filtered[$index]
+            echo $filtered[$index]
+        end
+    end
+    return $exit_code
 end
 
 function _bait_choose_help
