@@ -1,6 +1,13 @@
-function _bait_choose --argument-names key
-    argparse h/help select-if-one cursor= header= selected-prefix= unselected-prefix= \
-        'limit=!_fish_validate_int --min 1' -- $argv
+function _bait_choose
+    argparse \
+        h/help \
+        select-if-one \
+        cursor= \
+        header= \
+        selected-prefix= \
+        unselected-prefix= \
+        'limit=!_fish_validate_int --min 1' \
+        -- $argv
     or begin
         _bait_choose_help
         return 1
@@ -11,35 +18,38 @@ function _bait_choose --argument-names key
         return
     end
 
-    if not set -q choice
-        set -g choice 0
-        set -g options $argv
-    end
+    set -l choice 0
+    set -l exit_code 0
 
-    switch $key
-        case up
-            set choice (math "($choice - 1 + $(count $options))")
-        case down
-            set choice (math "($choice + 1)")
-        case enter
-            echo $options[(math "$choice + 1")]
-            set -g _bait_exit 0
-            return
-        case escape
-            set -g _bait_exit 1
-            return
-    end
-    set choice (math "$choice % $(count $options)")
-
-    echo "Choose:"
-    for i in (seq (count $options))
-        if test (math "$choice + 1") -eq $i
-            echo -n "> "
-        else
-            echo -n "  "
+    _bait_ui_setup
+    while true
+        set -l lines Choose: \n
+        for i in (seq (count $argv))
+            if test (math $choice + 1) -eq $i
+                set -a lines "> "
+            else
+                set -a lines "  "
+            end
+            set -a lines $argv[$i] \n
         end
-        echo $options[$i]
+        _bait_ui_io $lines
+
+        switch $_bait_ui_input
+            case up
+                set choice (math $choice - 1 + (count $argv))
+            case down
+                set choice (math $choice + 1)
+            case enter
+                break
+            case escape
+                set exit_code 1
+                break
+        end
+        set choice (math $choice % (count $argv))
     end
+
+    _bait_ui_teardown
+    echo $argv[(math $choice + 1)]
 end
 
 function _bait_choose_help
